@@ -7,6 +7,7 @@ namespace Lab0.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private int _counter = 0;
 
     public HomeController(ILogger<HomeController> logger)
     {
