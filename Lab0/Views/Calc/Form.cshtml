@@ -1,0 +1,34 @@
+@model dynamic
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Calculator</h2>
+
+<form method="post" action="/Calc/Result">
+    <div class="mb-4">
+        <label for="x">Liczba 1</label>
+        <input class="form-control" type="number" id="x" name="x" step="0.1"/>
+    </div>
+    
+    <div class="mb-4">
+        <label for="op">Operator</label>
+        <select class="form-control" name="op" id="op">
+            <option value="add">+</option>
+            <option value="sub">-</option>
+            <option value="mul">*</option>
+            <option value="div">/</option>
+        </select>
+    </div>
+    
+    <div class="mb-4">
+        <label for="y">Liczba 2</label>
+        <input class="form-control" type="number" id="y" name="y" step="0.1"/>
+    </div>
+    
+    <div class="mb-4">
+        <input class="btn btn-outline-primary" type="submit" id="res" value = "Calculate" name="res"/>
+    </div>
+</form>
