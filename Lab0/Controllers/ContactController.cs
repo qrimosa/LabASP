@@ -32,7 +32,7 @@ public class ContactController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        return  View();
+        return View();
     }
 
     [HttpPost]

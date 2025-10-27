@@ -1,0 +1,69 @@
+@model List<Lab0.Models.AlbumModel>
+
+@{
+    ViewBag.Title = "Albums";
+    Layout = "_Layout";
+}
+
+<h2 class="mb-4">Albums</h2>
+
+<a class="btn btn-outline-primary mb-3" asp-action="Create" asp-controller="Album">
+    + Add Album
+</a>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No albums found.</div>
+}
+else
+{
+    <table class="table table-secondary table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Band</th>
+                <th>Songs</th>
+                <th>Chart Position</th>
+                <th>Release Date</th>
+                <th>Total Duration</th>
+                <th style="width: 180px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var album in Model)
+        {
+            <tr>
+                <td>@album.Name</td>
+                <td>@album.Band</td>
+                <td>
+                    @if (album.Songs != null && album.Songs.Any())
+                    {
+                        <ul class="mb-0">
+                            @foreach (var song in album.Songs)
+                            {
+                                <li>@song</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No songs</span>
+                    }
+                </td>
+                <td>@album.ChartPosition</td>
+                <td>@album.ReleaseDate.ToString("yyyy-MM-dd")</td>
+                <td>@album.TotalDuration.ToString(@"hh\:mm\:ss")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@album.Id" class="btn btn-sm btn-outline-info">View</a>
+                    <form asp-action="Delete" asp-route-id="@album.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Delete this album?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

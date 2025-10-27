@@ -1,0 +1,50 @@
+@model Lab0.Models.AlbumModel
+
+@{
+    ViewBag.Title = "Create Album";
+    Layout = "_Layout";
+}
+
+<h2>Create a new album</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Band" class="form-label"></label>
+        <input asp-for="Band" class="form-control" />
+        <span asp-validation-for="Band" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Songs" class="form-label">Songs (comma-separated)</label>
+        <input asp-for="Songs" class="form-control" name="Songs" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ChartPosition" class="form-label">Chart Placement</label>
+        <input asp-for="ChartPosition" class="form-control" placeholder="Leave empty if not on charts" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReleaseDate" class="form-label"></label>
+        <input asp-for="ReleaseDate" class="form-control" type="date" />
+        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TotalDuration" class="form-label">Total Duration (hh:mm:ss)</label>
+        <input asp-for="TotalDuration" class="form-control" type="time" step="1"/>
+        <span asp-validation-for="TotalDuration" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
