@@ -1,7 +1,9 @@
+using Lab0.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<IContactInterface, IContactServiceInMemory>();
 
 var app = builder.Build();
 

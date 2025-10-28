@@ -55,6 +55,7 @@ else
                 <td>@album.TotalDuration.ToString(@"hh\:mm\:ss")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@album.Id" class="btn btn-sm btn-outline-info">View</a>
+                    <a asp-action="Edit" asp-route-id="@album.Id" class="btn btn-sm btn-outline-light">Edit</a>
                     <form asp-action="Delete" asp-route-id="@album.Id" method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger"
                                 onclick="return confirm('Delete this album?');">

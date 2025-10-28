@@ -8,24 +8,30 @@ public class AlbumModel
     [HiddenInput]
     public int Id { get; set; }
 
+    [Display(Name = "Name")]
     [Required(ErrorMessage = "Album name is required.")]
     [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
     public string Name { get; set; }
 
+    [Display(Name = "Band")]
     [Required(ErrorMessage = "Band name is required.")]
     [StringLength(50, MinimumLength = 2, ErrorMessage = "Band name must be between 2 and 50 characters.")]
     public string Band { get; set; }
 
+    [Display(Name = "List of songs")]
     public List<string>? Songs { get; set; }
 
     [Range(1, 200, ErrorMessage = "Chart position must be between 1 and 200.")]
+    [Display(Name = "Position in chart")]
     public int? ChartPosition { get; set; }
 
     [Required(ErrorMessage = "Release date is required.")]
     [DataType(DataType.Date)]
+    [Display(Name = "Realease Date")]
     public DateOnly ReleaseDate { get; set; }
 
     [Required(ErrorMessage = "Total duration is required.")]
     [DataType(DataType.Time)]
+    [Display(Name = "Album Duration")]
     public TimeSpan TotalDuration { get; set; }
 }

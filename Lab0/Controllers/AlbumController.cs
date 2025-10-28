@@ -71,4 +71,25 @@ public class AlbumController : Controller
         _albums.Remove(id);
         return RedirectToAction("Index");
     }
+
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        if (_albums.ContainsKey(id))
+        {
+            return View(_albums[id]);
+        }
+        return NotFound();
+    }
+
+    [HttpPost]
+    public IActionResult Edit(AlbumModel album)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(album);
+        }
+        _albums[album.Id] = album;
+        return RedirectToAction("Index");
+    }
 }

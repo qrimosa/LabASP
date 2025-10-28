@@ -1,62 +1,100 @@
 using Lab0.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lab0.Controllers;
-
-public class ContactController : Controller
+namespace Lab0.Controllers
 {
-    private static Dictionary<int, Contact> _contacts = new()
+    public class ContactController : Controller
     {
-        {1, new Contact()
-            {
-                Id = 1,
-                Name = "John Doe",
-                Email = "johndoe@gmail.com",
-                BirthDate = DateOnly.FromDateTime(new DateTime(1992, 05, 01))
-        }},
-        {2, new Contact()
-            {
-                Id = 2,
-                Name = "Sigma Sigmovich",
-                Email = "sigma@gmail.com",
-                BirthDate = DateOnly.FromDateTime(new DateTime(1967, 06, 07))
-        }},
-    };
+        private readonly IContactInterface _contactInterface;
 
-    private static int i = 0;
-    // GET
-    public IActionResult Index()
-    {
-        return View(_contacts.Values.ToList());
-    }
-    [HttpGet]
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public IActionResult Create(Contact contact)
-    {
-        if (ModelState.IsValid)
+        public ContactController(IContactInterface contactInterface)
         {
-            contact.Id = ++i;
-            _contacts.Add(contact.Id, contact);
-            return RedirectToAction("Index");
+            _contactInterface = contactInterface;
         }
 
-        return View(contact);
-    }
-
-    public IActionResult Details(int id)
-    {
-        if (_contacts.ContainsKey(id))
+        // GET: /Contact
+        public IActionResult Index()
         {
-            return View(_contacts[id]);
+            var contacts = _contactInterface.GetContacts();
+            return View(contacts);
         }
-        else
+
+        // GET: /Contact/Create
+        [HttpGet]
+        public IActionResult Create()
         {
-            return NotFound();
+            return View();
+        }
+
+        // POST: /Contact/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Contact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                _contactInterface.CreateContact(contact);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(contact);
+        }
+
+        // GET: /Contact/Details/5
+        public IActionResult Details(int id)
+        {
+            var contact = _contactInterface.GetContactById(id);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            return View(contact);
+        }
+
+        // GET: /Contact/Edit/5
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var contact = _contactInterface.GetContactById(id);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            return View(contact);
+        }
+
+        // POST: /Contact/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Contact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                bool updated = _contactInterface.UpdateContact(contact);
+                if (!updated)
+                {
+                    return NotFound();
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(contact);
+        }
+
+        // POST: /Contact/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            bool deleted = _contactInterface.DeleteContact(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
