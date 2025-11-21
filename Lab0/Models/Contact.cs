@@ -7,15 +7,22 @@ public class Contact
 {
     [HiddenInput]
     public int Id { get; set; }
-    
+
     [Required]
-    [StringLength(maximumLength: 50, MinimumLength = 3)]
+    [StringLength(maximumLength: 100, MinimumLength = 2)]
+    [Display(Name = "Imię i nazwisko")]
     public string? Name { get; set; }
     
     [EmailAddress]
-    [Required]
+    [Display(Name = "Adres email")]
     public string? Email { get; set; }
     
-    [DataType(DataType.Date)]
-    public DateOnly BirthDate { get; set; }
+    // [Phone]
+    // public string? Phone { get; set; }
+    //
+    // [Range (minimum: 1, maximum: 100)]
+    // public int FriendsNumber { get; set; }
+    //  
+    // [DataType(DataType.Date)]
+    // public DateTime Created { get; set; }
 }

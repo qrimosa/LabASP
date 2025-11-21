@@ -1,74 +1,95 @@
-using Microsoft.AspNetCore.Mvc;
 using Lab0.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lab0.Controllers;
 
-public class AlbumController : Controller
+public class AlbumController(IAlbumService service) : Controller
 {
-    private static readonly Dictionary<int, AlbumModel> _albums = new();
-    private static int _nextId = 1;
-
-    static AlbumController()
-    {
-        _albums[_nextId++] = new AlbumModel
-        {
-            Id = 1,
-            Name = "Hybrid Theory",
-            Band = "Linkin Park",
-            Songs = new List<string> { "Papercut", "In the End", "Crawling" },
-            ChartPosition = 2,
-            ReleaseDate = new DateOnly(2000, 10, 24),
-            TotalDuration = new TimeSpan(0, 37, 45)
-        };
-
-        _albums[_nextId++] = new AlbumModel
-        {
-            Id = 2,
-            Name = "Random Access Memories",
-            Band = "Daft Punk",
-            Songs = new List<string> { "Give Life Back to Music", "Get Lucky", "Instant Crush" },
-            ChartPosition = 1,
-            ReleaseDate = new DateOnly(2013, 5, 17),
-            TotalDuration = new TimeSpan(0, 74, 24)
-        };
-    }
-
+    // GET: list of albums
     public IActionResult Index()
     {
-        var albums = _albums.Values.ToList();
-        return View(albums);
+        return View(service.GetAlbums());
     }
 
-    public IActionResult Create() => View();
+    // GET: display the form
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
 
+    // POST: receive form data and save
     [HttpPost]
-    public IActionResult Create(AlbumModel album, string Songs)
+    public IActionResult Create(AlbumModel model)
     {
         if (!ModelState.IsValid)
-            return View(album);
+        {
+            return View(model);
+        }
 
-        album.Songs = Songs.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                           .Select(s => s.Trim())
-                           .ToList();
-
-        album.Id = _nextId++;
-        _albums[album.Id] = album;
-
+        service.AddAlbum(model);
         return RedirectToAction("Index");
     }
 
+    // GET: album details
     public IActionResult Details(int id)
     {
-        if (!_albums.TryGetValue(id, out var album))
+        var album = service.GetAlbumById(id);
+
+        if (album is null)
+        {
             return NotFound();
+        }
 
         return View(album);
     }
 
+    // GET: edit form
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var album = service.GetAlbumById(id);
+
+        if (album is null)
+        {
+            return NotFound();
+        }
+
+        return View(album);
+    }
+
+    // POST: update album
     [HttpPost]
+    public IActionResult Edit(AlbumModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        service.UpdateAlbum(model);
+        return RedirectToAction("Index");
+    }
+
+    // GET: delete confirmation
+    [HttpGet]
     public IActionResult Delete(int id)
     {
-        _albums.Remove(id);
+        var album = service.GetAlbumById(id);
+
+        if (album is null)
+        {
+            return NotFound();
+        }
+
+        return View(album);
+    }
+
+    // POST: delete action
+    [HttpPost]
+    public IActionResult DeleteConfirm(int id)
+    {
+        service.DeleteAlbumById(id);
         return RedirectToAction("Index");
     }
 }

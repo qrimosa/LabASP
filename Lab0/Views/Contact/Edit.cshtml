@@ -5,20 +5,21 @@
     Layout = "_Layout";
 }
 
-<h2>Dodaj kontakt</h2>
-<form asp-action="Create" method="post">
+<h2>Edytuj kontakt</h2>
+<form asp-action="Edit" method="post">
+    <input asp-for="Id"/>
     <div class="mb-3">
         <label class="form-label" asp-for="Name"></label>
         <input class="form-control" asp-for="Name"/>
         <span class="text-danger" asp-validation-for="Name"></span>
     </div>
-    
+
     <div class="mb-3">
         <label class="form-label" asp-for="Email"></label>
         <input class="form-control" asp-for="Email"/>
         <span class="text-danger" asp-validation-for="Email"></span>
     </div>
-    
+
     <div class="mb-3">
         <button class="btn btn-primary" type="submit">Zapisz</button>
     </div>

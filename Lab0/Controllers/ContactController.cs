@@ -3,60 +3,89 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lab0.Controllers;
 
-public class ContactController : Controller
+public class ContactController(IContactService service) : Controller
 {
-    private static Dictionary<int, Contact> _contacts = new()
-    {
-        {1, new Contact()
-            {
-                Id = 1,
-                Name = "John Doe",
-                Email = "johndoe@gmail.com",
-                BirthDate = DateOnly.FromDateTime(new DateTime(1992, 05, 01))
-        }},
-        {2, new Contact()
-            {
-                Id = 2,
-                Name = "Sigma Sigmovich",
-                Email = "sigma@gmail.com",
-                BirthDate = DateOnly.FromDateTime(new DateTime(1967, 06, 07))
-        }},
-    };
-
-    private static int i = 0;
     // GET
     public IActionResult Index()
     {
-        return View(_contacts.Values.ToList());
+        return View(service.GetContacts());
     }
-    [HttpGet]
+
+    [HttpGet]   // wyświetlenie formularza dodania obiektu
     public IActionResult Create()
     {
         return View();
     }
-
-    [HttpPost]
-    public IActionResult Create(Contact contact)
+    
+    [HttpPost] //odbior danych obiektu i zapisanie do bazy
+    public IActionResult Create(Contact model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            contact.Id = ++i;
-            _contacts.Add(contact.Id, contact);
-            return RedirectToAction("Index");
+            return View(model);
         }
-
-        return View(contact);
+        service.AddContact(model);
+        return RedirectToAction("Index");   // przejdź do listy obiektów
     }
 
     public IActionResult Details(int id)
     {
-        if (_contacts.ContainsKey(id))
+        var contact = service.GetContactById(id);
+        if (contact is not null)
         {
-            return View(_contacts[id]);
+            return View(contact);
         }
         else
         {
             return NotFound();
         }
     }
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var contact = service.GetContactById(id);
+        if (contact is not null)
+        {
+            return View(contact);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPost]
+    public IActionResult Edit(Contact model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+        // aktualizacja obiektu
+        service.UpdateContact(model);
+        return RedirectToAction("Index"); 
+    }
+    
+    [HttpGet]
+    public IActionResult Delete(int id)
+    {
+        var contact = service.GetContactById(id);
+        if (contact is not null)
+        {
+            return View(contact);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPost]
+    public IActionResult DeleteConfirm(int id)
+    {
+        service.DeleteContactById(id);
+        return RedirectToAction("Index");
+    }
+    
+    
 }
