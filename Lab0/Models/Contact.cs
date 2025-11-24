@@ -16,13 +16,8 @@ public class Contact
     [EmailAddress]
     [Display(Name = "Adres email")]
     public string? Email { get; set; }
-    
-    // [Phone]
-    // public string? Phone { get; set; }
-    //
-    // [Range (minimum: 1, maximum: 100)]
-    // public int FriendsNumber { get; set; }
-    //  
-    // [DataType(DataType.Date)]
-    // public DateTime Created { get; set; }
+
+    // --- Add this ---
+    public int? OrganizationId { get; set; }
+    public Organization? Organization { get; set; }
 }

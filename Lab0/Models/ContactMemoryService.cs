@@ -1,6 +1,6 @@
 namespace Lab0.Models;
 
-public class ContactMemoryService : IContactService
+public class ContactMemoryService: IContactService
 {
     private Dictionary<int, Contact> _contacts = new(){
         { 1, new Contact() {Id = 1, Email = "ewa@wsei.edu.pl", Name = "ewa"} },

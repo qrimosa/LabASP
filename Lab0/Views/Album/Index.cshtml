@@ -57,6 +57,7 @@ else
                     <a asp-action="Details" asp-route-id="@album.Id" class="btn btn-sm btn-outline-info">View</a>
                     <a asp-action="Edit" asp-route-id="@album.Id" class="btn btn-sm btn-outline-warning">Edit</a>
                     <form asp-action="DeleteConfirm" asp-route-id="@album.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-sm btn-outline-danger"
                                 onclick="return confirm('Delete this album?');">
                             Delete

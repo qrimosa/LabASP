@@ -3,8 +3,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IContactService, ContactMemoryService>();
-builder.Services.AddSingleton<IAlbumService, AlbumMemoryService>();
+builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddTransient<IContactService, ContactDbService>();
+builder.Services.AddTransient<IAlbumService, AlbumDbService>();
 
 
 var app = builder.Build();

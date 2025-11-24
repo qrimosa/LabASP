@@ -8,6 +8,7 @@
 <h2>Create a new album</h2>
 
 <form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" />
@@ -22,7 +23,7 @@
 
     <div class="mb-3">
         <label asp-for="Songs" class="form-label">Songs (comma-separated)</label>
-        <input asp-for="Songs" class="form-control" name="Songs" />
+        <input name="Songs" value="@string.Join(", ", Model?.Songs ?? new List<string>())" class="form-control" />
     </div>
 
     <div class="mb-3">
