@@ -1,0 +1,27 @@
+@model Lab07.Models.Movies.Movie
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Delete</h1>
+
+<h3>Czy na pewno chcesz usunąć ten film?</h3>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+
+        <dt class="col-sm-2">Overview</dt>
+        <dd class="col-sm-10">@Model.Overview</dd>
+    </dl>
+</div>
+
+<form asp-action="Delete" method="post" asp-route-id="@Model.MovieId">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

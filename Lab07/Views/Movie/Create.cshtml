@@ -1,0 +1,84 @@
+@model Lab07.Models.Movies.MovieModel
+@using Lab07.Models.Movies
+@{
+ViewData["Title"] = "Create movie";
+Layout = "~/Views/Shared/_Layout.cshtml";
+
+var companies = ViewBag.Companies as List<ProductionCompany> ?? new();
+}
+
+<h1>Create movie</h1>
+
+<form asp-action="Create" method="post" class="mt-3">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Overview" class="form-label"></label>
+                <textarea asp-for="Overview" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Overview" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ReleaseDate" class="form-label"></label>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-2">
+                <label for="filter" class="form-label">Filter companies</label>
+                <input class="form-control" type="text" id="filter" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CompanyId" class="form-label"></label>
+                <select asp-for="CompanyId" class="form-select" id="CompanyId">
+                    <option value="">-- select company --</option>
+                    @foreach (var c in companies)
+                    {
+                    <option value="@c.CompanyId">@c.CompanyName</option>
+                    }
+                </select>
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back to list</a>
+</form>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial" />
+<script>
+    const select = document.getElementById("CompanyId");
+    const filter = document.getElementById("filter");
+
+    filter.onchange = function () {
+        if (!filter.value) return;
+
+        fetch(`/api/companies?filter=${encodeURIComponent(filter.value)}`)
+            .then(r => {
+                if (!r.ok) throw `Status ${r.status}`;
+                return r.json();
+            })
+            .then(items => {
+                select.innerHTML = '<option value="">-- select company --</option>';
+                for (const item of items) {
+                    const opt = document.createElement('option');
+                    opt.value = item.companyId;
+                    opt.textContent = item.companyName;
+                    select.appendChild(opt);
+                }
+            })
+            .catch(e => console.log('API error', e));
+    };
+</script>
+}

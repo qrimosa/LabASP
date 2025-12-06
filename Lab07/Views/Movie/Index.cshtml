@@ -1,0 +1,67 @@
+@model Lab07.Models.Movies.PagingListAsync<Lab07.Models.Movies.Movie>
+
+@{
+    ViewData["Title"] = "Movies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    CancellationToken token = CancellationToken.None;
+}
+
+<h1>Movies</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Data.GetAsyncEnumerator(token).Current.Title)</th>
+            <th class="text-end">@Html.DisplayNameFor(model => model.Data.GetAsyncEnumerator(token).Current.Budget)</th>
+            <th>@Html.DisplayNameFor(model => model.Data.GetAsyncEnumerator(token).Current.ReleaseDate)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @await foreach (var item in Model.Data)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.Title)</td>
+                <td class="text-end">@Html.DisplayFor(m => item.Budget)</td>
+                <td>@(item.ReleaseDate.HasValue ? item.ReleaseDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MovieId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.MovieId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.MovieId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav aria-label="Movies page navigation">
+    <ul class="pagination">
+        @if (Model.IsPrevious)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page - 1)" asp-route-size="@Model.Size">Poprzednia</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><a class="page-link">Poprzednia</a></li>
+        }
+
+        <li class="page-item disabled"><a class="page-link">@Model.Page / @Model.TotalPages</a></li>
+
+        @if (Model.IsNext)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page + 1)" asp-route-size="@Model.Size">Następna</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><a class="page-link">Następna</a></li>
+        }
+    </ul>
+</nav>;
