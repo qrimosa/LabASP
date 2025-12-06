@@ -1,8 +1,11 @@
 using Lab0.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Lab0.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AlbumController : Controller
     {
         private readonly IAlbumService _service;

@@ -7,7 +7,8 @@
 
 <h2>Edytuj kontakt</h2>
 <form asp-action="Edit" method="post">
-    <input asp-for="Id"/>
+    <input asp-for="Id" type="hidden" />
+    
     <div class="mb-3">
         <label class="form-label" asp-for="Name"></label>
         <input class="form-control" asp-for="Name"/>
@@ -21,7 +22,15 @@
     </div>
 
     <div class="mb-3">
-        <button class="btn btn-primary" type="submit">Zapisz</button>
+        <label class="form-label" asp-for="OrganizationId">Organizacja</label>
+        <select class="form-select" asp-for="OrganizationId"
+                asp-items="ViewBag.Organizations">
+            <option value="">-- wybierz organizację --</option>
+        </select>
+        <span class="text-danger" asp-validation-for="OrganizationId"></span>
     </div>
 
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit">Zapisz</button>
+    </div>
 </form>

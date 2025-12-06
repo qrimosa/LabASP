@@ -1,57 +1,67 @@
 using Lab0.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Lab0.Controllers;
 
-public class ContactController(IContactService service) : Controller
+public class ContactController : Controller
 {
+    private readonly IContactService _contactService;
+    private readonly IOrganizationService _organizationService;
+
+    public ContactController(IContactService contactService, IOrganizationService organizationService)
+    {
+        _contactService = contactService;
+        _organizationService = organizationService;
+    }
+
     // GET
     public IActionResult Index()
     {
-        return View(service.GetContacts());
+        return View(_contactService.GetContacts());
     }
 
-    [HttpGet]   // wyświetlenie formularza dodania obiektu
+    [HttpGet]
     public IActionResult Create()
     {
+        ViewBag.Organizations = new SelectList(
+            _organizationService.GetOrganizations(), "Id", "Name");
         return View();
     }
-    
-    [HttpPost] //odbior danych obiektu i zapisanie do bazy
+
+    [HttpPost]
     public IActionResult Create(Contact model)
     {
         if (!ModelState.IsValid)
         {
+            ViewBag.Organizations = new SelectList(
+                _organizationService.GetOrganizations(), "Id", "Name", model.OrganizationId);
             return View(model);
         }
-        service.AddContact(model);
-        return RedirectToAction("Index");   // przejdź do listy obiektów
+
+        _contactService.AddContact(model);
+        return RedirectToAction("Index");
     }
 
     public IActionResult Details(int id)
     {
-        var contact = service.GetContactById(id);
-        if (contact is not null)
-        {
-            return View(contact);
-        }
-        else
-        {
+        var contact = _contactService.GetContactById(id);
+        if (contact is null)
             return NotFound();
-        }
+
+        return View(contact);
     }
+
     [HttpGet]
     public IActionResult Edit(int id)
     {
-        var contact = service.GetContactById(id);
-        if (contact is not null)
-        {
-            return View(contact);
-        }
-        else
-        {
+        var contact = _contactService.GetContactById(id);
+        if (contact is null)
             return NotFound();
-        }
+
+        ViewBag.Organizations = new SelectList(
+            _organizationService.GetOrganizations(), "Id", "Name", contact.OrganizationId);
+        return View(contact);
     }
 
     [HttpPost]
@@ -59,33 +69,29 @@ public class ContactController(IContactService service) : Controller
     {
         if (!ModelState.IsValid)
         {
+            ViewBag.Organizations = new SelectList(
+                _organizationService.GetOrganizations(), "Id", "Name", model.OrganizationId);
             return View(model);
         }
-        // aktualizacja obiektu
-        service.UpdateContact(model);
-        return RedirectToAction("Index"); 
+
+        _contactService.UpdateContact(model);
+        return RedirectToAction("Index");
     }
-    
+
     [HttpGet]
     public IActionResult Delete(int id)
     {
-        var contact = service.GetContactById(id);
-        if (contact is not null)
-        {
-            return View(contact);
-        }
-        else
-        {
+        var contact = _contactService.GetContactById(id);
+        if (contact is null)
             return NotFound();
-        }
+
+        return View(contact);
     }
 
     [HttpPost]
     public IActionResult DeleteConfirm(int id)
     {
-        service.DeleteContactById(id);
+        _contactService.DeleteContactById(id);
         return RedirectToAction("Index");
     }
-    
-    
 }

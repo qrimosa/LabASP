@@ -2,11 +2,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lab0.Models;
 
-public class ContactDbService(AppDbContext context, ILogger<ContactDbService> logger):IContactService
+public class ContactDbService(AppDbContext context, ILogger<ContactDbService> logger) : IContactService
 {
     public List<Contact> GetContacts()
     {
-        return context.Contacts.ToList();
+        return context.Contacts
+            .Include(c => c.Organization)
+            .ToList();
     }
 
     public void AddContact(Contact contact)
@@ -38,6 +40,7 @@ public class ContactDbService(AppDbContext context, ILogger<ContactDbService> lo
         {
             return false;
         }
+
         context.Contacts.Remove(deleted);
         context.SaveChanges();
         return true;
@@ -45,7 +48,8 @@ public class ContactDbService(AppDbContext context, ILogger<ContactDbService> lo
 
     public Contact? GetContactById(int id)
     {
-        var contact = context.Contacts.Find(id);
-        return contact;
+        return context.Contacts
+            .Include(c => c.Organization)
+            .FirstOrDefault(c => c.Id == id);
     }
 }
