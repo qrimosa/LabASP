@@ -1,12 +1,13 @@
 @model Lab0.Models.AlbumModel
 
 @{
-    ViewBag.Title = "Album Details";
-    Layout = "_Layout";
+ViewBag.Title = "Album Details";
+Layout = "_Layout";
 }
 
 <h2>@Model.Name</h2>
 <p><strong>Band:</strong> @Model.Band</p>
+<p><strong>Label:</strong> @(Model.Label != null ? Model.Label.Name : "—")</p>
 <p><strong>Chart position:</strong> @Model.ChartPosition</p>
 <p><strong>Release date:</strong> @Model.ReleaseDate.ToString("yyyy-MM-dd")</p>
 <p><strong>Total duration:</strong> @Model.TotalDuration.ToString(@"hh\:mm\:ss")</p>
@@ -14,16 +15,16 @@
 <h4>Songs</h4>
 @if (Model.Songs != null && Model.Songs.Any())
 {
-    <ul>
-        @foreach (var song in Model.Songs)
-        {
-            <li>@song</li>
-        }
-    </ul>
+<ul>
+    @foreach (var song in Model.Songs)
+    {
+    <li>@song</li>
+    }
+</ul>
 }
 else
 {
-    <p>No songs listed.</p>
+<p>No songs listed.</p>
 }
 <div class="d-flex align-items-center gap-2">
     <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>

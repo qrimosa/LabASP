@@ -1,18 +1,92 @@
-@model TModel
+@model Lab0.Models.AlbumModel
 
 @{
-    Layout = null;
+    ViewBag.Title = "Create Album via API";
+    Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+<h2>Create Album via API</h2>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+<form id="apiAlbumForm">
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <input id="Name" name="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Band" class="form-label">Band</label>
+        <input id="Band" name="Band" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="LabelId" class="form-label">Label</label>
+        <select id="LabelId" name="LabelId" class="form-select">
+            @foreach (var label in (IEnumerable<Lab0.Models.Label>)ViewBag.Labels)
+            {
+                <option value="@label.Id">@label.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ReleaseDate" class="form-label">Release date</label>
+        <input id="ReleaseDate" name="ReleaseDate" type="date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="TotalDuration" class="form-label">Total duration (hh:mm:ss)</label>
+        <input id="TotalDuration" name="TotalDuration" type="time" step="1" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Songs" class="form-label">Songs (comma-separated)</label>
+        <input id="Songs" name="Songs" class="form-control" />
+    </div>
+
+    <button type="button" id="submitApiAlbum" class="btn btn-primary">Create via API</button>
+</form>
+
+<div id="apiResult" class="mt-3"></div>
+
+@section Scripts {
+    <script>
+        document.getElementById('submitApiAlbum').addEventListener('click', function () {
+            const songsRaw = document.getElementById('Songs').value;
+            const songs = songsRaw
+                ? songsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0)
+                : [];
+
+            const album = {
+                name: document.getElementById('Name').value,
+                band: document.getElementById('Band').value,
+                labelId: parseInt(document.getElementById('LabelId').value),
+                chartPosition: null,
+                releaseDate: document.getElementById('ReleaseDate').value,
+                totalDuration: document.getElementById('TotalDuration').value,
+                songs: songs
+            };
+
+            fetch('/api/AlbumsApi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(album)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(t => { throw new Error(t || response.status); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('apiResult').innerText =
+                    'Created album with id ' + data.id;
+            })
+            .catch(err => {
+                document.getElementById('apiResult').innerText =
+                    'Error: ' + err.message;
+            });
+        });
+    </script>
+}

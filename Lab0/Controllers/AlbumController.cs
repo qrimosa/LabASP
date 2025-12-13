@@ -1,7 +1,8 @@
 using Lab0.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Lab0.Controllers
 {
@@ -9,22 +10,31 @@ namespace Lab0.Controllers
     public class AlbumController : Controller
     {
         private readonly IAlbumService _service;
+        private readonly AppDbContext _context;
 
-        public AlbumController(IAlbumService service)
+        public AlbumController(IAlbumService service, AppDbContext context)
         {
             _service = service;
+            _context = context;
         }
 
-        // GET: list of albums
-        public IActionResult Index()
+        // GET: list of albums with pagination
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            return View(_service.GetAlbums());
+            int pageSize = 10;
+            var query = _service.GetAlbumsQuery().OrderBy(a => a.Name);
+
+            var paginated = await PaginatedList<AlbumModel>.CreateAsync(
+                query, pageNumber ?? 1, pageSize);
+
+            return View(paginated);
         }
 
         // GET: display the form
         [HttpGet]
         public IActionResult Create()
         {
+            PopulateLabelsDropDownList();
             return View();
         }
 
@@ -34,7 +44,10 @@ namespace Lab0.Controllers
         public IActionResult Create(AlbumModel model, string Songs)
         {
             if (!ModelState.IsValid)
+            {
+                PopulateLabelsDropDownList(model.LabelId);
                 return View(model);
+            }
 
             if (!string.IsNullOrWhiteSpace(Songs))
                 model.Songs = Songs.Split(",", StringSplitOptions.RemoveEmptyEntries)
@@ -69,6 +82,7 @@ namespace Lab0.Controllers
                 return NotFound();
             }
 
+            PopulateLabelsDropDownList(album.LabelId);
             return View(album);
         }
 
@@ -78,7 +92,10 @@ namespace Lab0.Controllers
         public IActionResult Edit(AlbumModel model, string Songs)
         {
             if (!ModelState.IsValid)
+            {
+                PopulateLabelsDropDownList(model.LabelId);
                 return View(model);
+            }
 
             if (!string.IsNullOrWhiteSpace(Songs))
                 model.Songs = Songs.Split(",", StringSplitOptions.RemoveEmptyEntries)
@@ -91,6 +108,7 @@ namespace Lab0.Controllers
             if (!ok)
             {
                 ModelState.AddModelError("", "Failed to update album (it may not exist).");
+                PopulateLabelsDropDownList(model.LabelId);
                 return View(model);
             }
 
@@ -119,5 +137,28 @@ namespace Lab0.Controllers
             _service.DeleteAlbumById(id);
             return RedirectToAction("Index");
         }
+
+        private void PopulateLabelsDropDownList(object? selectedLabel = null)
+        {
+            var labelsQuery = _context.Labels
+                .OrderBy(l => l.Name)
+                .AsNoTracking()
+                .ToList();
+
+            ViewBag.LabelId = new SelectList(labelsQuery, "Id", "Name", selectedLabel);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ApiCreate()
+        {
+            var labels = await _context.Labels
+                .OrderBy(l => l.Name)
+                .AsNoTracking()
+                .ToListAsync();
+
+            ViewBag.Labels = labels;
+            return View();
+        }
+
     }
 }

@@ -24,6 +24,14 @@
     </div>
 
     <div class="mb-3">
+        <label asp-for="LabelId" class="form-label">Label</label>
+        <select asp-for="LabelId" class="form-select" asp-items="ViewBag.LabelId">
+            <option value="">-- select label --</option>
+        </select>
+        <span asp-validation-for="LabelId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="Songs" class="form-label">Songs (comma-separated)</label>
         <input name="Songs" value="@string.Join(", ", Model?.Songs ?? new List<string>())" class="form-control" />
     </div>

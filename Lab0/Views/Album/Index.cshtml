@@ -1,4 +1,5 @@
-@model List<Lab0.Models.AlbumModel>
+@model Lab0.Models.PaginatedList<Lab0.Models.AlbumModel>
+
 
 @{
     ViewBag.Title = "Albums";
@@ -10,6 +11,10 @@
 <a class="btn btn-outline-primary mb-3" asp-action="Create" asp-controller="Album">
     + Add Album
 </a>
+<a class="btn btn-outline-secondary mb-3" asp-action="ApiCreate" asp-controller="Album">
+    + Add Album via API
+</a>
+
 
 @if (Model == null || !Model.Any())
 {
@@ -22,6 +27,7 @@ else
             <tr>
                 <th>Name</th>
                 <th>Band</th>
+                <th>Label</th>
                 <th>Songs</th>
                 <th>Chart Position</th>
                 <th>Release Date</th>
@@ -35,6 +41,7 @@ else
             <tr>
                 <td>@album.Name</td>
                 <td>@album.Band</td>
+                <td>@(album.Label != null ? album.Label.Name : "—")</td>
                 <td>
                     @if (album.Songs != null && album.Songs.Any())
                     {
@@ -68,4 +75,29 @@ else
         }
         </tbody>
     </table>
+
+    
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    
+
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @prevDisabled">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page @Model.PageIndex of @Model.TotalPages
+                </span>
+            </li>
+            <li class="page-item @nextDisabled">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
 }

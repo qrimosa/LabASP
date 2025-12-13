@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lab0.Models
@@ -28,5 +29,13 @@ namespace Lab0.Models
         [Required(ErrorMessage = "Total duration is required.")]
         [DataType(DataType.Time)]
         public TimeSpan TotalDuration { get; set; }
+
+        // New: foreign key to Label
+        [Display(Name = "Label")]
+        public int? LabelId { get; set; }
+
+        // New: navigation property
+        [ForeignKey(nameof(LabelId))]
+        public Label? Label { get; set; }
     }
 }

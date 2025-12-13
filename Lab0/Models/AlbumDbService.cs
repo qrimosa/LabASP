@@ -13,9 +13,17 @@ namespace Lab0.Models
             _logger = logger;
         }
 
+        // New: query for pagination, includes Label
+        public IQueryable<AlbumModel> GetAlbumsQuery()
+        {
+            return _context.Albums
+                .Include(a => a.Label)
+                .AsNoTracking();
+        }
+
         public List<AlbumModel> GetAlbums()
         {
-            return _context.Albums.ToList();
+            return GetAlbumsQuery().ToList();
         }
 
         public void AddAlbum(AlbumModel album)
@@ -31,11 +39,7 @@ namespace Lab0.Models
                 var existing = _context.Albums.Find(album.Id);
                 if (existing == null) return false;
 
-                // Update scalar & simple properties
                 _context.Entry(existing).CurrentValues.SetValues(album);
-
-                // For the Songs property (List<string>) the conversion handles saving,
-                // but ensure the navigation property is set on the tracked entity:
                 existing.Songs = album.Songs;
 
                 _context.SaveChanges();
@@ -68,7 +72,9 @@ namespace Lab0.Models
 
         public AlbumModel? GetAlbumById(int id)
         {
-            return _context.Albums.Find(id);
+            return _context.Albums
+                .Include(a => a.Label)
+                .FirstOrDefault(a => a.Id == id);
         }
     }
 }
